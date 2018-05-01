@@ -4,7 +4,13 @@ using System.Text;
 
 namespace SqlIntro
 {
-    interface IProductRepository
+    public interface IProductRepository
     {
+        IEnumerable<Product> GetProducts();
+        IEnumerable<Product> GetProductswithReviews();
+        IEnumerable<Product> GetProductsandReview();
+        void DeleteProduct(int id);
+        void UpdateProduct(Product prod);
+        void InsertProduct(Product prod);
     }
 }

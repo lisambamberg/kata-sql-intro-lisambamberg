@@ -7,7 +7,10 @@ namespace SqlIntro
         static void Main(string[] args)
         {
             var connectionString = "Server=localhost;Database=adventureworks;Uid=root;Pwd=password";
-            var repo = new ProductRepository(connectionString);
+           // var repo = new ProductRepository(connectionString);
+            var repo = new DapperProductRepo(connectionString);
+
+
 
             foreach (var prod in repo.GetProducts())
             {
