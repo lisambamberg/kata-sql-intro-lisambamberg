@@ -14,7 +14,7 @@ namespace SqlIntro
                 Console.WriteLine("Product Name:" + prod.Name);
             }
 
-           
+           repo.DeleteProduct(324);
             Console.ReadLine();
         }
 
