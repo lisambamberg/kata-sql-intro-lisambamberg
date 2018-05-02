@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Microsoft.Extensions.Configuration;
 
 namespace SqlIntro
 {
@@ -6,21 +8,27 @@ namespace SqlIntro
     {
         static void Main(string[] args)
         {
-            var connectionString = "Server=localhost;Database=adventureworks;Uid=root;Pwd=password";
-           // var repo = new ProductRepository(connectionString);
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsetting.json")
+#if DEBUG
+                .AddJsonFile("appsettings.Debug.json")
+#else
+                .AddJsonFile($"appsettings.Release.json")
+#endif 
+                .Build();
+
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+
             var repo = new DapperProductRepo(connectionString);
-
-
+            //var repoDapper = new DapperProductRepo(connectionString);
 
             foreach (var prod in repo.GetProducts())
             {
-                Console.WriteLine("Product Name:" + prod.Name);
+                Console.WriteLine("Product Name:" + prod.Name + "Comments" + prod.Comments);
             }
 
-           repo.DeleteProduct(324);
             Console.ReadLine();
         }
-
-       
     }
 }

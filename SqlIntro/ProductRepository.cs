@@ -29,12 +29,42 @@ namespace SqlIntro
                 conn.Open();
 
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT ProductId as ID, Name from product;"; //TODO:  Write a SELECT statement that gets all products
-                
+                cmd.CommandText = "SELECT ProductId as ID, Name from product;";
+
                 var dr = cmd.ExecuteReader();
                 while (dr.Read())
                 {
                     yield return new Product { Name = dr["Name"].ToString() };
+                }
+            }
+        }
+
+        public IEnumerable<Product> GetProductswithReviews()
+        {
+            using (var conn = new MySqlConnection(_connectionString))
+            {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = "SELECT product.name, productreview.ProductID FROM product INNER JOIN productreview ON product.ProductID = productreview.ProductID;";
+                conn.Open();
+                var dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    yield return new Product { Name = dr["Name"].ToString() };
+                }
+            }
+        }
+
+        public IEnumerable<Product> GetProductsandReview()
+        {
+            using (var conn = new MySqlConnection(_connectionString))
+            {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = "SELECT product.name, productreview.Comments FROM product LEFT JOIN productreview ON product.ProductID = productreview.ProductID WHERE comments IS NOT NULL;";
+                conn.Open();
+                var dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    yield return new Product { Name = dr["Name"].ToString(), Comments = dr["Comments"].ToString() };
                 }
             }
         }
@@ -50,7 +80,7 @@ namespace SqlIntro
                 conn.Open();
 
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = $"DELETE FROM product WHERE ProductID = @id"; //Write a delete statement that deletes by id
+                cmd.CommandText = $"DELETE FROM product WHERE ProductID = @id";
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.ExecuteNonQuery();
             }
@@ -61,8 +91,6 @@ namespace SqlIntro
         /// <param name="prod"></param>
         public void UpdateProduct(Product prod)
         {
-            //This is annoying and unnecessarily tedious for large objects.
-            //More on this in the future...  Nothing to do here..
             using (var conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
@@ -90,5 +118,6 @@ namespace SqlIntro
                 cmd.ExecuteNonQuery();
             }
         }
+
     }
 }

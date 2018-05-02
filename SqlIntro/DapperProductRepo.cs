@@ -16,6 +16,28 @@ namespace SqlIntro
             _connectionString = connectionString;
         }
 
+        public IEnumerable<Product> GetProductsandReview()
+        {
+            using (var conn = new MySqlConnection(_connectionString))
+            {
+                conn.Open();
+                const string sql = "SELECT product.name, productreview.Comments from product" +
+                                   "LEFT JOIN ProductReview on product.ProductId = ProductReview.ProductId" +
+                                   "WHERE Comments is NOT NULL;";
+                return conn.Query<Product>(sql);
+            }
+        }
+
+        public IEnumerable<Product> GetProductswithReviews()
+        {
+            using (var conn = new MySqlConnection(_connectionString))
+            {
+                conn.Open();
+                const string sql = "SELECT product.name FROM product INNER JOIN productreview on product.ProductID = productreview.ProductID;";
+                return conn.Query<Product>(sql);
+            }
+        }
+
         public IEnumerable<Product> GetProducts()
         {
             using (var conn = new MySqlConnection(_connectionString))
@@ -51,10 +73,5 @@ namespace SqlIntro
                 conn.Execute("INSERT INTO product (Name) values(@name)", new { name = prod.Name });
             }
         }
-
-      //  public SELECT column_name(s )
-       // {
-        //    throw new NotImplementedException();
-        //}
     }
 }
